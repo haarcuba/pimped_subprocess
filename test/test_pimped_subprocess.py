@@ -17,11 +17,13 @@ class TestPimpedSubprocess:
                 Call( 'pty.openpty', [], ( FakeObject( 'writeDescriptor' ), FakeObject( 'readDescriptor' ) ) ) <<\
                 Call( 'subprocess.Popen', popenArgs, FakeObject( 'popen' ), kwargExpectations = kwargExpectations ) <<\
                 Call( 'os.fdopen', [ FakeObject( 'readDescriptor' ), 'r' ], FakeObject( 'readStream' ) ) <<\
-                Call( 'threading.Thread', [], FakeObject( 'the_thread' ), kwargExpectations = { 'target': saveargument.SaveArgument( 'monitorThread' ) } )
+                Call( 'threading.Thread', [], FakeObject( 'the_thread' ), kwargExpectations = { 'target': saveargument.SaveArgument( 'monitorThread' ) } ) <<\
+                Call( 'the_thread.start', [], None )
 
             self.tested = pimped_subprocess.PimpedSubprocess( * popenArgs, ** popenKwargs )
             self.tested.register( monitorFunction )
             self.tested.launch()
+            assert FakeObject( 'the_thread' ).daemon == True
 
         self.monitorThread = saveargument.saved()[ 'monitorThread' ]
         

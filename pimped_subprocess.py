@@ -15,6 +15,8 @@ class PimpedSubprocess( object ):
         self._subprocess = subprocess.Popen( * self._popenArgs, ** self._popenKwargs )
         self._reader = os.fdopen( read, 'r' )
         self._thread = threading.Thread( target = self._monitor )
+        self._thread.daemon = True
+        self._thread.start()
 
     def register( self, monitor ):
         pass

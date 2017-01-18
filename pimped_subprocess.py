@@ -2,11 +2,13 @@ import threading
 import os
 import pty
 import subprocess
+import select
 
 class PimpedSubprocess( object ):
     def __init__( self, * popenArgs, ** popenKwargs ):
         self._popenArgs = popenArgs
         self._popenKwargs = popenKwargs
+        self._client = None
 
     def launch( self ):
         write, read = pty.openpty()
@@ -14,13 +16,21 @@ class PimpedSubprocess( object ):
         self._popenKwargs[ 'close_fds' ] = True
         self._subprocess = subprocess.Popen( * self._popenArgs, ** self._popenKwargs )
         self._reader = os.fdopen( read, 'r' )
+        self._poller = select.poll()
+        self._poller.register( self._reader.fileno(), select.POLLIN | select.POLLERR )
         self._thread = threading.Thread( target = self._monitor )
         self._thread.daemon = True
         self._thread.start()
 
     def register( self, monitor ):
-        pass
+        self._client = monitor
+
+    @property
+    def process( self ):
+        return self._subprocess
 
     def _monitor( self ):
-        pass
-
+        while True:
+            line = self._reader.readline()
+            if self._client is not None:
+                self._client( line.strip() )

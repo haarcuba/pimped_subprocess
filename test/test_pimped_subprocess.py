@@ -93,3 +93,18 @@ class TestPimpedSubprocess:
                 Call( 'readStream.close', [], None )
 
             self.monitorThread()
+
+    def test_inform_about_process_death_via_callback( self ):
+        self.construct( FakeObject( 'monitorFunction' ), [ 'popen', 'arguments' ], { 'some': 'kwargs', 'for': 'Popen' } )
+        self.tested.onProcessEnd( FakeObject( 'myEndCallback' ), 'my-token' )
+        with Scenario() as scenario:
+            scenario <<\
+                Call( 'poller.poll', [ DEFAULT_TIMEOUT ], [ ( 'file_descriptor', real_select.POLLIN ) ] ) <<\
+                Call( 'readStream.readline', [], 'line 1\n' ) <<\
+                Call( 'monitorFunction', [ 'line 1' ], None ) <<\
+                Call( 'poller.poll', [ DEFAULT_TIMEOUT ], [] ) <<\
+                Call( 'subProcess.poll', [], 255 ) <<\
+                Call( 'readStream.close', [], None ) <<\
+                Call( 'myEndCallback', [ 'my-token', 255 ], None )
+
+            self.monitorThread()

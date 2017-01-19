@@ -9,6 +9,7 @@ class PimpedSubprocess( object ):
         self._popenArgs = popenArgs
         self._popenKwargs = popenKwargs
         self._client = None
+        self._onProcessEnd = None
 
     def launch( self ):
         write, read = pty.openpty()
@@ -36,7 +37,7 @@ class PimpedSubprocess( object ):
             if not self._readable( events ):
                 exitCode = self._subprocess.poll()
                 if exitCode is not None:
-                    self._reader.close()
+                    self._processOver( exitCode )
                     return
                 continue
             line = self._reader.readline()
@@ -49,3 +50,11 @@ class PimpedSubprocess( object ):
                 return True
 
         return False
+
+    def onProcessEnd( self, callback, token ):
+        self._onProcessEnd = dict( callback = callback, token = token )
+
+    def _processOver( self, exitCode ):
+        self._reader.close()
+        if self._onProcessEnd is not None:
+            self._onProcessEnd[ 'callback' ]( self._onProcessEnd[ 'token' ], exitCode )

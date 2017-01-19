@@ -9,9 +9,10 @@ tests_require = [
         ]
 
 setup(name='pimped_subprocess',
-      version='0.0.1',
+      version='0.1.0',
       description=README,
       long_description=README,
+      url='https://github.com/haarcuba/pimped_subprocess',
       classifiers=[
           "Programming Language :: Python",
       ],
@@ -19,7 +20,6 @@ setup(name='pimped_subprocess',
       author_email='haarcuba@gmail.com',
       keywords='subprocess, terminal, monitoring',
       packages=find_packages(),
-      py_modules = ['pimped_subprocess'],
       include_package_data=True,
       zip_safe=False,
       extras_require={

@@ -6,7 +6,7 @@
 import pimped_subprocess
 import time
 
-class AddLineCounter( object ):
+class PrependLineNumber( object ):
     def __init__( self ):
         self._counter = 0
 
@@ -14,11 +14,11 @@ class AddLineCounter( object ):
         self._counter += 1
         print( '{:04}:\t{}'.format( self._counter, line ) )
 
-addLineCounter = AddLineCounter()
+prependLineNumber = PrependLineNumber()
 p = pimped_subprocess.PimpedSubprocess( 'ls -l', shell = True )
 
 # must register to get the lines
-p.register( addLineCounter )
+p.onOutput( prependLineNumber )
 
 # acutally run the subprocess
 p.launch()

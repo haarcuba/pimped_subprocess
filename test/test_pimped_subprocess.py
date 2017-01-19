@@ -1,4 +1,4 @@
-import pimped_subprocess
+import pimped_subprocess.pimped_subprocess_ as pimped_subprocess
 import pytest
 from testix.frequentlyused import *
 import testix.saveargument

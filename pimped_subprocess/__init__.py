@@ -1,0 +1,3 @@
+import pimped_subprocess.pimped_subprocess_
+
+PimpedSubprocess = pimped_subprocess_.PimpedSubprocess

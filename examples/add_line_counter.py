@@ -1,4 +1,5 @@
 import pimped_subprocess
+import time
 
 class AddLineCounter( object ):
     def __init__( self ):
@@ -19,3 +20,4 @@ p.launch()
 
 # wait for it to finish
 p.process.wait()
+time.sleep( 0.1 ) # wait a little extra to finish reading everything

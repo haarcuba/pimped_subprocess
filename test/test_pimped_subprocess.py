@@ -24,7 +24,7 @@ class TestPimpedSubprocess:
             kwargExpectations.update( dict( stdout = FakeObject( 'writeDescriptor' ), close_fds = True ) )
             scenario <<\
                 Call( 'pty.openpty', [], ( FakeObject( 'writeDescriptor' ), FakeObject( 'readDescriptor' ) ) ) <<\
-                Call( 'subprocess.Popen', popenArgs, FakeObject( 'popen' ), kwargExpectations = kwargExpectations ) <<\
+                Call( 'subprocess.Popen', popenArgs, FakeObject( 'subProcess' ), kwargExpectations = kwargExpectations ) <<\
                 Call( 'os.fdopen', [ FakeObject( 'readDescriptor' ), 'r' ], FakeObject( 'readStream' ) ) <<\
                 Call( 'select.poll', [], FakeObject( 'poller' ) ) <<\
                 Call( 'readStream.fileno', [], 'the_file_descriptor' ) <<\
@@ -42,7 +42,7 @@ class TestPimpedSubprocess:
 
     def test_expose_process_api( self ):
         self.construct( None, [ 'popen', 'arguments' ], { 'some': 'kwargs', 'for': 'Popen' } )
-        assert self.tested.process == FakeObject( 'popen' )
+        assert self.tested.process == FakeObject( 'subProcess' )
         
     def test_launch_process_no_monitor( self ):
         self.construct( None, [ 'popen', 'arguments' ], { 'some': 'kwargs', 'for': 'Popen' } )
@@ -70,7 +70,9 @@ class TestPimpedSubprocess:
                 Call( 'readStream.readline', [], 'line 2\n' ) <<\
                 Call( 'monitorFunction', [ 'line 2' ], None ) <<\
                 Call( 'poller.poll', [ DEFAULT_TIMEOUT ], [] ) <<\
+                Call( 'subProcess.poll', [], None ) <<\
                 Call( 'poller.poll', [ DEFAULT_TIMEOUT ], [] ) <<\
+                Call( 'subProcess.poll', [], None ) <<\
                 Call( 'poller.poll', [ DEFAULT_TIMEOUT ], [ ( 'file_descriptor', real_select.POLLIN ) ] ) <<\
                 Call( 'readStream.readline', [], 'line 3\n' ) <<\
                 Call( 'monitorFunction', [ 'line 3' ], None ) <<\
@@ -78,3 +80,16 @@ class TestPimpedSubprocess:
 
             with pytest.raises( EndTestException ):
                 self.monitorThread()
+
+    def test_if_nothing_to_read_and_process_ended_cleanup_and_exit_thread( self ):
+        self.construct( FakeObject( 'monitorFunction' ), [ 'popen', 'arguments' ], { 'some': 'kwargs', 'for': 'Popen' } )
+        with Scenario() as scenario:
+            scenario <<\
+                Call( 'poller.poll', [ DEFAULT_TIMEOUT ], [ ( 'file_descriptor', real_select.POLLIN ) ] ) <<\
+                Call( 'readStream.readline', [], 'line 1\n' ) <<\
+                Call( 'monitorFunction', [ 'line 1' ], None ) <<\
+                Call( 'poller.poll', [ DEFAULT_TIMEOUT ], [] ) <<\
+                Call( 'subProcess.poll', [], 0 ) <<\
+                Call( 'readStream.close', [], None )
+
+            self.monitorThread()

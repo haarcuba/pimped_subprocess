@@ -34,6 +34,10 @@ class PimpedSubprocess( object ):
         while True:
             events = self._poller.poll( TIMEOUT_MILLISECONDS )
             if not self._readable( events ):
+                exitCode = self._subprocess.poll()
+                if exitCode is not None:
+                    self._reader.close()
+                    return
                 continue
             line = self._reader.readline()
             if self._client is not None:

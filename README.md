@@ -44,6 +44,27 @@ This code will produce something like this:
     0012:   drwxrwxr-x 2 yoav yoav 4096 ינו 19 01:41 tools
 
 
-# Caveats
+# Multiple Output Monitors
 
-Currently you can `register` only *one* callable. Registering for a second time will effectively remove the first one.
+You can register multiple output monitors by calling `onOutput` multiple times:
+
+```python
+p.onOutput( callable1 )
+p.onOutput( callable2 )
+p.onOutput( callable3 )
+```
+
+# Process End Event
+
+You can also register to get notified when the process ends:
+
+```python
+
+def myCallback( token, exitCode ):
+    print( 'process ended with exit code: {}'.format( exitCode ) )
+
+p.onProcessEnd( myCallback, 'some token here' )
+```
+
+When the process ends, `myCallback` will be called with the token and the process's exit code.
+The token's job is to help you distinguish between different processes that use the same callback.

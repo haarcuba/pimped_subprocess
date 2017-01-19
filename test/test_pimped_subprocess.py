@@ -34,7 +34,7 @@ class TestPimpedSubprocess:
 
             self.tested = pimped_subprocess.PimpedSubprocess( * popenArgs, ** popenKwargs )
             if monitorFunction is not None:
-                self.tested.register( monitorFunction )
+                self.tested.onOutput( monitorFunction )
             self.tested.launch()
             assert FakeObject( 'the_thread' ).daemon == True
 
@@ -83,8 +83,8 @@ class TestPimpedSubprocess:
 
     def test_register_multiple_monitors( self ):
         self.construct( FakeObject( 'monitorFunction1' ), [ 'popen', 'arguments' ], { 'some': 'kwargs', 'for': 'Popen' } )
-        self.tested.register( FakeObject( 'monitorFunction2' ) )
-        self.tested.register( FakeObject( 'monitorFunction3' ) )
+        self.tested.onOutput( FakeObject( 'monitorFunction2' ) )
+        self.tested.onOutput( FakeObject( 'monitorFunction3' ) )
         with Scenario() as scenario:
             scenario <<\
                 Call( 'poller.poll', [ DEFAULT_TIMEOUT ], [ ( 'file_descriptor', real_select.POLLIN ) ] ) <<\

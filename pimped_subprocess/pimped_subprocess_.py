@@ -23,7 +23,7 @@ class PimpedSubprocess( object ):
         self._thread.daemon = True
         self._thread.start()
 
-    def register( self, monitor ):
+    def onOutput( self, monitor ):
         self._outputMonitors.append( monitor )
 
     @property

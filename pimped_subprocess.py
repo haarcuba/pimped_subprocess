@@ -30,7 +30,18 @@ class PimpedSubprocess( object ):
         return self._subprocess
 
     def _monitor( self ):
+        TIMEOUT_MILLISECONDS = 1000
         while True:
+            events = self._poller.poll( TIMEOUT_MILLISECONDS )
+            if not self._readable( events ):
+                continue
             line = self._reader.readline()
             if self._client is not None:
                 self._client( line.strip() )
+
+    def _readable( self, events ):
+        for descriptor, event in events:
+            if event & select.POLLIN:
+                return True
+
+        return False

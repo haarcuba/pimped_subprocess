@@ -81,6 +81,27 @@ class TestPimpedSubprocess:
             with pytest.raises( EndTestException ):
                 self.monitorThread()
 
+    def test_register_multiple_monitors( self ):
+        self.construct( FakeObject( 'monitorFunction1' ), [ 'popen', 'arguments' ], { 'some': 'kwargs', 'for': 'Popen' } )
+        self.tested.register( FakeObject( 'monitorFunction2' ) )
+        self.tested.register( FakeObject( 'monitorFunction3' ) )
+        with Scenario() as scenario:
+            scenario <<\
+                Call( 'poller.poll', [ DEFAULT_TIMEOUT ], [ ( 'file_descriptor', real_select.POLLIN ) ] ) <<\
+                Call( 'readStream.readline', [], 'line 1\n' ) <<\
+                Call( 'monitorFunction1', [ 'line 1' ], None ) <<\
+                Call( 'monitorFunction2', [ 'line 1' ], None ) <<\
+                Call( 'monitorFunction3', [ 'line 1' ], None ) <<\
+                Call( 'poller.poll', [ DEFAULT_TIMEOUT ], [ ( 'file_descriptor', real_select.POLLIN ) ] ) <<\
+                Call( 'readStream.readline', [], 'line 2\n' ) <<\
+                Call( 'monitorFunction1', [ 'line 2' ], None ) <<\
+                Call( 'monitorFunction2', [ 'line 2' ], None ) <<\
+                Call( 'monitorFunction3', [ 'line 2' ], None ) <<\
+                ThrowingCall( 'poller.poll', [ DEFAULT_TIMEOUT ], EndTestException )
+
+            with pytest.raises( EndTestException ):
+                self.monitorThread()
+
     def test_if_nothing_to_read_and_process_ended_cleanup_and_exit_thread( self ):
         self.construct( FakeObject( 'monitorFunction' ), [ 'popen', 'arguments' ], { 'some': 'kwargs', 'for': 'Popen' } )
         with Scenario() as scenario:

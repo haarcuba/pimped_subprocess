@@ -8,7 +8,7 @@ class PimpedSubprocess( object ):
     def __init__( self, * popenArgs, ** popenKwargs ):
         self._popenArgs = popenArgs
         self._popenKwargs = popenKwargs
-        self._client = None
+        self._outputMonitors = []
         self._onProcessEnd = None
 
     def launch( self ):
@@ -19,18 +19,18 @@ class PimpedSubprocess( object ):
         self._reader = os.fdopen( read, 'r' )
         self._poller = select.poll()
         self._poller.register( self._reader.fileno(), select.POLLIN | select.POLLERR )
-        self._thread = threading.Thread( target = self._monitor )
+        self._thread = threading.Thread( target = self._monitorProcess )
         self._thread.daemon = True
         self._thread.start()
 
     def register( self, monitor ):
-        self._client = monitor
+        self._outputMonitors.append( monitor )
 
     @property
     def process( self ):
         return self._subprocess
 
-    def _monitor( self ):
+    def _monitorProcess( self ):
         TIMEOUT_MILLISECONDS = 1000
         while True:
             events = self._poller.poll( TIMEOUT_MILLISECONDS )
@@ -41,8 +41,11 @@ class PimpedSubprocess( object ):
                     return
                 continue
             line = self._reader.readline()
-            if self._client is not None:
-                self._client( line.strip() )
+            self._diseminate( line )
+
+    def _diseminate( self, line ):
+        for client in self._outputMonitors:
+            client( line.strip() )
 
     def _readable( self, events ):
         for descriptor, event in events:

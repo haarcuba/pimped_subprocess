@@ -25,6 +25,6 @@ def onDeath( token, exitCode ):
 tested.subProcess.onProcessEnd( onDeath, 'my token' )
 tested.background()
 time.sleep( 1 )
-print( 'remote process pid is {}'.format( tested.pid ) )
+print( 'remote process pid is {}. you can check that it is really there'.format( tested.pid ) )
 
 processDone.wait()

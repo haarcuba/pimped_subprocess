@@ -1,6 +1,12 @@
 # Pimped Subprocess
 This is a library of "pimped up" subprocess modules with monitoring and remote (SSH) capabilities.
 
+## Installatin
+
+Simple:
+
+    $ pip install pimped_subprocess
+
 ## Pimped Subprocess
 
 `PimpedSubprocess` allows you to run subprocesses in a similar manner to Python's standard `subprocesses`, except that it allows you to follow the subprocess `stdout` stream line by line.

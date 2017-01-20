@@ -1,4 +1,5 @@
 import threading
+import logging
 import os
 import pty
 import subprocess
@@ -15,6 +16,7 @@ class PimpedSubprocess( object ):
         write, read = pty.openpty()
         self._popenKwargs[ 'stdout' ] = write
         self._popenKwargs[ 'close_fds' ] = True
+        logging.info( 'running: Popen( {} ; {} )'.format( self._popenArgs, self._popenKwargs ) )
         self._subprocess = subprocess.Popen( * self._popenArgs, ** self._popenKwargs )
         self._reader = os.fdopen( read, 'r' )
         self._poller = select.poll()

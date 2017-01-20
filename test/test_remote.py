@@ -5,6 +5,7 @@ import testix.saveargument
 from testix import saveargument
 
 remote.pimped_subprocess = FakeObject( 'pimped_subprocess' )
+remote.atexit = FakeObject( 'atexit' )
 
 class TestRemote( object ):
     def construct( self, user, host, command ):
@@ -38,3 +39,22 @@ class TestRemote( object ):
             self.onOutputCallback( 'line 1' )
             self.onOutputCallback( 'line 2' )
             assert self.tested.pid == 6667
+
+    def test_background_process_automatic_cleanup( self ):
+        self.construct( 'myuser', 'myhost', 'sleep 1000' )
+        with Scenario() as scenario:
+            scenario <<\
+                Call( 'atexit.register', [ saveargument.SaveArgument( 'atExitCallback' ) ], None ) <<\
+                Call( 'pimpedSubprocess.launch', [], None )
+            self.tested.background( cleanup = True )
+            self.onOutputCallback( '6667' )
+            self.onOutputCallback( 'line 1' )
+            self.onOutputCallback( 'line 2' )
+            assert self.tested.pid == 6667
+            killerSSHCommand = [ 'ssh', '{}@{}'.format( 'myuser', 'myhost' ), 'kill', '6667' ]
+            scenario <<\
+                Call( 'pimped_subprocess.PimpedSubprocess', [ killerSSHCommand ], FakeObject( 'killer' ) ) <<\
+                Call( 'killer.launch', [], None ) <<\
+                Call( 'killer.process.wait', [], 0 )
+            atExitCallback = saveargument.saved()[ 'atExitCallback' ]
+            atExitCallback()

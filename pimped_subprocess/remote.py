@@ -1,5 +1,5 @@
+import atexit
 import pimped_subprocess
-import logging
 
 class _CaptureProcessID( object ):
     def __init__( self ):
@@ -14,8 +14,9 @@ class _CaptureProcessID( object ):
 class Remote( object ):
     def __init__( self, user, host, command ):
         exposePidScript = self._exposePidScript( command )
+        self._user = user
+        self._host = host
         sshCommand = [ 'ssh', '{}@{}'.format( user, host ), '''bash -c "{}"'''.format( exposePidScript ) ]
-        logging.info( 'running {}'.format( sshCommand ) )
         self._subProcess = pimped_subprocess.PimpedSubprocess( sshCommand )
         self._captureProcessId = _CaptureProcessID()
         self._subProcess.onOutput( self._captureProcessId )
@@ -28,8 +29,16 @@ class Remote( object ):
         self._subProcess.launch()
         return self._subProcess.process.wait()
 
-    def background( self ):
+    def background( self, cleanup = False ):
+        if cleanup:
+            atexit.register( self._killRemote )
         self._subProcess.launch()
+
+    def _killRemote( self ):
+        sshCommand = [ 'ssh', '{}@{}'.format( self._user, self._host ), 'kill', str( self.pid ) ]
+        killer = pimped_subprocess.PimpedSubprocess( sshCommand )
+        killer.launch()
+        return killer.process.wait()
 
     @property
     def subProcess( self ):

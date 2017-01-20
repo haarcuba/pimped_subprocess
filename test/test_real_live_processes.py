@@ -1,6 +1,7 @@
 from pimped_subprocess import capture_output
 import pimped_subprocess.pimped_subprocess_ as pimped_subprocess
 import time
+import pimped_subprocess.remote
 
 class TestActual( object ):
     def test_ls( self ):
@@ -24,3 +25,10 @@ class TestActual( object ):
         time.sleep( 1.5 )
         assert len( endingParameters ) == 1
         assert endingParameters[ 0 ] == ( 'abcde_7', 77 )
+
+    def test_run_ls_in_vagrant_via_ssh( self ):
+        ip = '10.50.50.11'
+        user = 'vagrant'
+        tested = pimped_subprocess.remote.Remote( user, ip, "bash -c 'exit 77'" )
+        exitCode = tested.foreground()
+        assert exitCode == 77 

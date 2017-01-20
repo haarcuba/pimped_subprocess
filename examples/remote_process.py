@@ -15,16 +15,16 @@ logging.basicConfig( level = logging.INFO )
 
 
 processDone = threading.Event()
-tested = pimped_subprocess.remote.Remote( arguments.user, arguments.host, "bash -c 'sleep 10 ; exit 55'" )
+remoteProgram = pimped_subprocess.remote.Remote( arguments.user, arguments.host, "bash -c 'sleep 10 ; exit 55'" )
 
 def onDeath( token, exitCode ):
     global processDone
     logging.info( 'process done: {}'.format( ( token, exitCode ) ) )
     processDone.set()
 
-tested.subProcess.onProcessEnd( onDeath, 'my token' )
-tested.background()
+remoteProgram.subProcess.onProcessEnd( onDeath, 'my token' )
+remoteProgram.background()
 time.sleep( 1 )
-print( 'remote process pid is {}. you can check that it is really there'.format( tested.pid ) )
+print( 'remote process pid is {}. you can check that it is really there'.format( remoteProgram.pid ) )
 
 processDone.wait()

@@ -1,4 +1,7 @@
 # Pimped Subprocess
+This is a library of "pimped up" subprocess modules with monitoring and remote (SSH) capabilities.
+
+## Pimped Subprocess
 
 `PimpedSubprocess` allows you to run subprocesses in a similar manner to Python's standard `subprocesses`, except that it allows you to follow the subprocess `stdout` stream line by line.
 
@@ -44,7 +47,7 @@ This code will produce something like this:
     0012:   drwxrwxr-x 2 yoav yoav 4096 ינו 19 01:41 tools
 
 
-# Multiple Output Monitors
+## Multiple Output Monitors
 
 You can register multiple output monitors by calling `onOutput` multiple times:
 
@@ -54,7 +57,7 @@ p.onOutput( callable2 )
 p.onOutput( callable3 )
 ```
 
-# Process End Event
+## Process End Event
 
 You can also register to get notified when the process ends:
 
@@ -68,3 +71,53 @@ p.onProcessEnd( myCallback, 'some token here' )
 
 When the process ends, `myCallback` will be called with the token and the process's exit code.
 The token's job is to help you distinguish between different processes that use the same callback.
+
+## Remote Processes
+
+Using the `Remote` class, you can run processes on remote machines via `ssh`.
+
+```python
+remoteProgram = pimped_subprocess.remote.Remote( 'my-user', 'my.host.com', "ls /" )
+```
+
+the `Remote` object exposes the underlying `PimpedSubprocess`, so, e.g.
+
+
+```python
+def onDeath( token, exitCode ):
+    global processDone
+    logging.info( 'process done: {}'.format( ( token, exitCode ) ) )
+    processDone.set()
+
+remoteProgram.subProcess.onProcessEnd( onDeath, 'my token' )
+```
+
+You can run the remote program synchronously using `foreground`,
+
+```python
+remoteProgram.foreground()
+```
+
+or let it run in the background:
+
+```python
+remoteProgram.background()
+```
+
+The `Remote` object exposes the remote program's `pid`:
+
+
+```python
+remoteProgram.pid 
+```
+
+and you can also request, if running in the background, that it terminate the remote process when your process is done (internally this is done via `atexit`):
+
+
+```python
+remoteProgram.background( cleanup = True )
+````
+
+## Examples
+
+check out the examples in the `/examples` folder.

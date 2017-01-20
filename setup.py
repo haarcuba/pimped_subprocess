@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-README = 'a pimped up subprocess module with monitoring capabilities'
+README = 'a pimped up subprocess module with monitoring and remote (SSH) capabilities'
 
 requires = []
 tests_require = [

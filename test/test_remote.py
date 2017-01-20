@@ -7,10 +7,6 @@ from testix import saveargument
 remote.pimped_subprocess = FakeObject( 'pimped_subprocess' )
 
 class TestRemote( object ):
-    # def setup_method( self ):
-        # FakeObject.clearNonModuleFakeObjects()
-        # remote.pimped_subprocess = FakeObject( 'pimped_subprocess' )
-
     def construct( self, user, host, command ):
         with Scenario() as scenario:
             sshCommand = [ 'ssh', '{}@{}'.format( user, host ), 'bash -c "echo $$; exec {}"'.format( command ) ]

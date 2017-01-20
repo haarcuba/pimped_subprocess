@@ -3,7 +3,7 @@ import pimped_subprocess.pimped_subprocess_ as pimped_subprocess
 import time
 import pimped_subprocess.remote
 
-class TestActual( object ):
+class TestRealLiveProcesses( object ):
     def test_ls( self ):
         tested = pimped_subprocess.PimpedSubprocess( 'ls -l test/fixtures/*', shell = True )
         capture = capture_output.CaptureOutput()

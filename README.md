@@ -121,3 +121,24 @@ remoteProgram.background( cleanup = True )
 ## Examples
 
 check out the examples in the `/examples` folder.
+
+## Running the Tests
+
+If you want to run the tests you will need  `testix` and `pytest`:
+
+    $ pip install testix pytest
+
+You'll also need `rake`, but at least on recent Ubuntu versions - rake is installed by default.
+
+Once you have all these, from the root of the source tree:
+
+    $ rake test
+
+you can see what indivitual test suites exist with
+
+    $ rake -T
+    found 3 test files
+    rake test                              # run all tests
+    rake test/test_pimped_subprocess.py    # run tests in test/test_pimped_subprocess.py
+    rake test/test_real_live_processes.py  # run tests in test/test_real_live_processes.py
+    rake test/test_remote.py               # run tests in test/test_remote.py

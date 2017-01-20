@@ -17,18 +17,15 @@ class Remote( object ):
         sshCommand = [ 'ssh', '{}@{}'.format( user, host ), '''bash -c "{}"'''.format( exposePidScript ) ]
         logging.info( 'running {}'.format( sshCommand ) )
         self._subProcess = pimped_subprocess.PimpedSubprocess( sshCommand )
+        self._captureProcessId = _CaptureProcessID()
+        self._subProcess.onOutput( self._captureProcessId )
 
     def _exposePidScript( self, command ):
         script = 'echo $$; exec {}'.format( command )
         return script
 
-    def _launchProcess( self ):
-        self._captureProcessId = _CaptureProcessID()
-        self._subProcess.onOutput( self._captureProcessId )
-        self._subProcess.launch()
-
     def foreground( self ):
-        self._launchProcess()
+        self._subProcess.launch()
         return self._subProcess.process.wait()
 
     @property

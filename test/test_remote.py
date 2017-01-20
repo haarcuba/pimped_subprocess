@@ -11,23 +11,19 @@ class TestRemote( object ):
         with Scenario() as scenario:
             sshCommand = [ 'ssh', '{}@{}'.format( user, host ), 'bash -c "echo $$; exec {}"'.format( command ) ]
             scenario <<\
-                Call( 'pimped_subprocess.PimpedSubprocess', [ sshCommand ], FakeObject( 'pimpedSubprocess' ) )
+                Call( 'pimped_subprocess.PimpedSubprocess', [ sshCommand ], FakeObject( 'pimpedSubprocess' ) ) <<\
+                Call( 'pimpedSubprocess.onOutput', [ saveargument.SaveArgument( 'onOutputCallback' ) ], None )
             self.tested = remote.Remote( user, host, command )
-
-    def launchProcessViaSSH( self ):
-        with Scenario() as scenario:
-            scenario <<\
-                Call( 'pimpedSubprocess.onOutput', [ saveargument.SaveArgument( 'onOutputCallback' ) ], None ) <<\
-                Call( 'pimpedSubprocess.launch', [], None ) <<\
-                Call( 'pimpedSubprocess.process.wait', [], 0 )
-
-            self.tested.foreground()
             self.onOutputCallback = saveargument.saved()[ 'onOutputCallback' ]
 
     def test_launch_process_via_ssh_and_detect_remote_pid( self ):
         self.construct( 'myuser', 'myhost', 'ls -l' )
-        self.launchProcessViaSSH()
-        self.onOutputCallback( '6667' )
-        self.onOutputCallback( 'line 1' )
-        self.onOutputCallback( 'line 2' )
-        assert self.tested.pid == 6667
+        with Scenario() as scenario:
+            scenario <<\
+                Call( 'pimpedSubprocess.launch', [], None ) <<\
+                Call( 'pimpedSubprocess.process.wait', [], 0 )
+            self.tested.foreground()
+            self.onOutputCallback( '6667' )
+            self.onOutputCallback( 'line 1' )
+            self.onOutputCallback( 'line 2' )
+            assert self.tested.pid == 6667

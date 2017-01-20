@@ -28,6 +28,13 @@ class Remote( object ):
         self._subProcess.launch()
         return self._subProcess.process.wait()
 
+    def background( self ):
+        self._subProcess.launch()
+
+    @property
+    def subProcess( self ):
+        return self._subProcess
+
     @property
     def pid( self ):
         return self._captureProcessId.pid

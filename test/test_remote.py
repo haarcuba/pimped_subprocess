@@ -27,3 +27,14 @@ class TestRemote( object ):
             self.onOutputCallback( 'line 1' )
             self.onOutputCallback( 'line 2' )
             assert self.tested.pid == 6667
+
+    def test_launch_process_in_background_via_ssh_and_detect_remote_pid( self ):
+        self.construct( 'myuser', 'myhost', 'ls -l' )
+        with Scenario() as scenario:
+            scenario <<\
+                Call( 'pimpedSubprocess.launch', [], None )
+            self.tested.background()
+            self.onOutputCallback( '6667' )
+            self.onOutputCallback( 'line 1' )
+            self.onOutputCallback( 'line 2' )
+            assert self.tested.pid == 6667

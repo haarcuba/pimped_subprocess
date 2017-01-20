@@ -16,7 +16,7 @@ class TestRemote( object ):
             self.tested = remote.Remote( user, host, command )
             self.onOutputCallback = saveargument.saved()[ 'onOutputCallback' ]
 
-    def test_launch_process_via_ssh_and_detect_remote_pid( self ):
+    def test_launch_process_in_foreground_via_ssh_and_detect_remote_pid( self ):
         self.construct( 'myuser', 'myhost', 'ls -l' )
         with Scenario() as scenario:
             scenario <<\

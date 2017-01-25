@@ -11,7 +11,7 @@ class _CaptureProcessID( object ):
         self.pid = int( line )
 
 
-class Remote( object ):
+class Process( object ):
     def __init__( self, user, host, command ):
         exposePidScript = self._exposePidScript( command )
         self._user = user

@@ -1,11 +1,13 @@
+import pimped_subprocess.remote
+import pimped_subprocess.remote.process
 from pimped_subprocess import remote
 import pytest
 from testix.frequentlyused import *
 import testix.saveargument
 from testix import saveargument
 
-remote.pimped_subprocess = FakeObject( 'pimped_subprocess' )
-remote.atexit = FakeObject( 'atexit' )
+remote.process.pimped_subprocess = FakeObject( 'pimped_subprocess' )
+remote.process.atexit = FakeObject( 'atexit' )
 
 class TestRemote( object ):
     def construct( self, user, host, command ):
@@ -14,7 +16,7 @@ class TestRemote( object ):
             scenario <<\
                 Call( 'pimped_subprocess.PimpedSubprocess', [ sshCommand ], FakeObject( 'pimpedSubprocess' ) ) <<\
                 Call( 'pimpedSubprocess.onOutput', [ saveargument.SaveArgument( 'onOutputCallback' ) ], None )
-            self.tested = remote.Remote( user, host, command )
+            self.tested = remote.process.Process( user, host, command )
             self.onOutputCallback = saveargument.saved()[ 'onOutputCallback' ]
 
     def test_launch_process_in_foreground_via_ssh_and_detect_remote_pid( self ):

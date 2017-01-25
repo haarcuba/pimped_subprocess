@@ -8,6 +8,8 @@ from testix import saveargument
 
 remote.process.pimped_subprocess = FakeObject( 'pimped_subprocess' )
 remote.process.atexit = FakeObject( 'atexit' )
+remote.process.pimped_subprocess.remote = FakeObject( 'remote' )
+remote.process.subprocess = FakeObject( 'subprocess' )
 
 class TestRemote( object ):
     def construct( self, user, host, command ):

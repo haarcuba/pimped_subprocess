@@ -10,6 +10,7 @@ class PimpedSubprocess( object ):
         self._popenArgs = popenArgs
         self._popenKwargs = popenKwargs
         self._outputMonitors = []
+        self._subprocess = None
         self._onProcessEnd = None
 
     def launch( self ):
@@ -31,6 +32,10 @@ class PimpedSubprocess( object ):
     @property
     def process( self ):
         return self._subprocess
+
+    def wait( self ):
+        assert self._subprocess is not None, "first launch the subprocess using launch()"
+        return self._subprocess.wait()
 
     def _monitorProcess( self ):
         TIMEOUT_MILLISECONDS = 1000

@@ -1,5 +1,5 @@
 # Pimped Subprocess
-This is a library of "pimped up" subprocess modules with monitoring and remote (SSH) capabilities.
+This is a library of "pimped up" subprocess modules with monitoring capabilities.
 
 ## Installation
 
@@ -80,53 +80,7 @@ The token's job is to help you distinguish between different processes that use 
 
 ## Remote Processes
 
-Using the `Remote` class, you can run processes on remote machines via `ssh`.
-
-```python
-remoteProgram = pimped_subprocess.remote.Remote( 'my-user', 'my.host.com', "ls /" )
-```
-
-the `Remote` object exposes the underlying `PimpedSubprocess`, so, e.g.
-
-
-```python
-def onDeath( token, exitCode ):
-    global processDone
-    logging.info( 'process done: {}'.format( ( token, exitCode ) ) )
-    processDone.set()
-
-remoteProgram.subProcess.onProcessEnd( onDeath, 'my token' )
-```
-
-You can run the remote program synchronously using `foreground`,
-
-```python
-remoteProgram.foreground()
-```
-
-or let it run in the background:
-
-```python
-remoteProgram.background()
-```
-
-The `Remote` object exposes the remote program's `pid`:
-
-
-```python
-remoteProgram.pid 
-```
-
-and you can also request, if running in the background, that it terminate the remote process when your process is done (internally this is done via `atexit`):
-
-
-```python
-remoteProgram.background( cleanup = True )
-````
-
-## Examples
-
-check out the examples in the `/examples` folder.
+Check out the [Closer](https://github.com/haarcuba/closer) library for using `PimpedSubprocess` capabilites on remote (via SSH) processes.
 
 ## Running the Tests
 

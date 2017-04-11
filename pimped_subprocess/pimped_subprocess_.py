@@ -56,10 +56,10 @@ class PimpedSubprocess( object ):
 
         return False
 
-    def onProcessEnd( self, callback, token ):
-        self._onProcessEnd = dict( callback = callback, token = token )
+    def onProcessEnd( self, callback ):
+        self._onProcessEnd = callback
 
     def _processOver( self, exitCode ):
         self._reader.close()
         if self._onProcessEnd is not None:
-            self._onProcessEnd[ 'callback' ]( self._onProcessEnd[ 'token' ], exitCode )
+            self._onProcessEnd( exitCode )

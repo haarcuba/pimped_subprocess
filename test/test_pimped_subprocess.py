@@ -43,7 +43,7 @@ class TestPimpedSubprocess:
     def test_expose_process_api( self ):
         self.construct( None, [ 'popen', 'arguments' ], { 'some': 'kwargs', 'for': 'Popen' } )
         assert self.tested.process == FakeObject( 'subProcess' )
-        
+
     def test_launch_process_no_monitor( self ):
         self.construct( None, [ 'popen', 'arguments' ], { 'some': 'kwargs', 'for': 'Popen' } )
         with Scenario() as scenario:
@@ -117,7 +117,7 @@ class TestPimpedSubprocess:
 
     def test_inform_about_process_death_via_callback( self ):
         self.construct( FakeObject( 'monitorFunction' ), [ 'popen', 'arguments' ], { 'some': 'kwargs', 'for': 'Popen' } )
-        self.tested.onProcessEnd( FakeObject( 'myEndCallback' ), 'my-token' )
+        self.tested.onProcessEnd( FakeObject( 'myEndCallback' ) )
         with Scenario() as scenario:
             scenario <<\
                 Call( 'poller.poll', [ DEFAULT_TIMEOUT ], [ ( 'file_descriptor', real_select.POLLIN ) ] ) <<\
@@ -126,6 +126,6 @@ class TestPimpedSubprocess:
                 Call( 'poller.poll', [ DEFAULT_TIMEOUT ], [] ) <<\
                 Call( 'subProcess.poll', [], 255 ) <<\
                 Call( 'readStream.close', [], None ) <<\
-                Call( 'myEndCallback', [ 'my-token', 255 ], None )
+                Call( 'myEndCallback', [ 255 ], None )
 
             self.monitorThread()

@@ -9,7 +9,7 @@ tests_require = [
         ]
 
 setup(name='pimped_subprocess',
-      version='0.3.0',
+      version='1.0.0',
       description=README,
       long_description=README,
       url='https://github.com/haarcuba/pimped_subprocess',

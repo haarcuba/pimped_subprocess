@@ -8,7 +8,7 @@ import select as real_select
 pimped_subprocess.subprocess = FakeObject( 'subprocess' )
 pimped_subprocess.threading = FakeObject( 'threading' )
 pimped_subprocess.pty = FakeObject( 'pty' )
-pimped_subprocess.os = FakeObject( 'os' )
+pimped_subprocess.open = FakeObject( 'open' )
 pimped_subprocess.select = FakeObject( 'select' )
 pimped_subprocess.select.POLLIN = real_select.POLLIN
 pimped_subprocess.select.POLLERR = real_select.POLLERR
@@ -25,7 +25,7 @@ class TestPimpedSubprocess:
             scenario <<\
                 Call( 'pty.openpty', [], ( FakeObject( 'writeDescriptor' ), FakeObject( 'readDescriptor' ) ) ) <<\
                 Call( 'subprocess.Popen', popenArgs, FakeObject( 'subProcess' ), kwargExpectations = kwargExpectations ) <<\
-                Call( 'os.fdopen', [ FakeObject( 'readDescriptor' ), 'r' ], FakeObject( 'readStream' ) ) <<\
+                Call( 'open', [ FakeObject( 'readDescriptor' ), 'r' ], FakeObject( 'readStream' ), kwargExpectations = { 'encoding': 'latin-1' } ) <<\
                 Call( 'select.poll', [], FakeObject( 'poller' ) ) <<\
                 Call( 'readStream.fileno', [], 'the_file_descriptor' ) <<\
                 Call( 'poller.register', [ 'the_file_descriptor', real_select.POLLIN | real_select.POLLERR ], None ) <<\

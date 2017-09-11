@@ -102,3 +102,15 @@ you can see what indivitual test suites exist with
     rake test/test_pimped_subprocess.py    # run tests in test/test_pimped_subprocess.py
     rake test/test_real_live_processes.py  # run tests in test/test_real_live_processes.py
     rake test/test_remote.py               # run tests in test/test_remote.py
+
+## Encodings
+
+The `launch()` function takes an encoding argument, e.g.
+
+    
+```python
+    p.launch( encoding = 'utf-8' )
+```
+
+By default it uses the `latin-1` encoding, since this encoding never produces
+decoding errors, but you can change it if you like.

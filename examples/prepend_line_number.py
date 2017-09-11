@@ -10,7 +10,8 @@ class PrependLineNumber( object ):
         print( '{:04}:\t{}'.format( self._counter, line ) )
 
 prependLineNumber = PrependLineNumber()
-p = pimped_subprocess.PimpedSubprocess( 'ls -l', shell = True )
+CODE = 'for _ in range( 10 ): print( "\u05de" )'
+p = pimped_subprocess.PimpedSubprocess( "python3 -c '{}'".format( CODE ), shell = True )
 
 # must register to get the lines
 p.onOutput( prependLineNumber )

@@ -13,13 +13,13 @@ class PimpedSubprocess( object ):
         self._subprocess = None
         self._onProcessEnd = None
 
-    def launch( self ):
+    def launch( self, encoding = 'latin-1' ):
         write, read = pty.openpty()
         self._popenKwargs[ 'stdout' ] = write
         self._popenKwargs[ 'close_fds' ] = True
         logging.info( 'running: Popen( {} ; {} )'.format( self._popenArgs, self._popenKwargs ) )
         self._subprocess = subprocess.Popen( * self._popenArgs, ** self._popenKwargs )
-        self._reader = os.fdopen( read, 'r' )
+        self._reader = open( read, 'r', encoding = encoding )
         self._poller = select.poll()
         self._poller.register( self._reader.fileno(), select.POLLIN | select.POLLERR )
         self._thread = threading.Thread( target = self._monitorProcess )

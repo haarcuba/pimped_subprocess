@@ -114,3 +114,7 @@ The `launch()` function takes an encoding argument, e.g.
 
 By default it uses the `latin-1` encoding, since this encoding never produces
 decoding errors, but you can change it if you like.
+
+## Windows Support
+
+This library leans on the `pty` module which seems to be unavailable for Windows. Hence, this is a Unix only library, sorry.

@@ -9,12 +9,13 @@ tests_require = [
         ]
 
 setup(name='pimped_subprocess',
-      version='2.2.0',
+      version='2.2.1',
       description=README,
       long_description=README,
       url='https://github.com/haarcuba/pimped_subprocess',
       classifiers=[
           "Programming Language :: Python",
+          "Operating System :: POSIX :: Linux",
       ],
       author='Yoav Kleinberger',
       author_email='haarcuba@gmail.com',

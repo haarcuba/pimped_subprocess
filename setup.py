@@ -5,7 +5,7 @@ README = 'a pimped up subprocess module with monitoring and remote (SSH) capabil
 requires = []
 tests_require = [
         'pytest',
-        'testix==0.9',
+        'testix==3.0.0b0',
         ]
 
 setup(name='pimped_subprocess',
